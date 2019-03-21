@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration>
+<!-- scan: 是否定时扫描刷新，默认为true；scanPeriod：定时刷新时间间隔，默认60 seconds；debug：是否打印logback内部日志，默认为false -->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!-- 应用系统名称 -->
+    <property name="app_name" value="asc"/>
+    <!-- 日志输出目录 -->
+    <property name="log_dir" value="/logs/${app_name}"/>
+    <!-- 指定上下文名称 -->
+    <contextName>${app_name}</contextName>
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+    <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+    <property name="FILE_LOG_PATTERN" value="${FILE_LOG_PATTERN:-%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+
+    <!-- 控制台 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 文件日志输出 -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log_dir}/${app_name}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log_dir}/${app_name}-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory><!-- 存放最近30天的日志 -->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize><!-- 每个日志文件最大100MB，大于100MB将会自动分割 -->
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </layout>
+    </appender>
+
+    <!-- level：指定日志打印级别， ERROR, WARN, INFO, DEBUG or TRACE -->
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="file"/>
+    </root>
+
+</configuration>
